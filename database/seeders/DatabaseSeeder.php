@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@sari.com'],
             [
                 'name' => 'Store Manager',
+                'role' => 'manager',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]

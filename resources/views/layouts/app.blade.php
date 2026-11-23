@@ -45,6 +45,17 @@
                             <i class="bi bi-grid"></i> Categories
                         </a>
                     </li>
+                    @if (auth()->user()->isManager())
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('products.trash') ? 'active' : '' }}" href="{{ route('products.trash') }}">
+                                <i class="bi bi-trash"></i> Trash
+                                @php $trashedCount = \App\Models\Product::onlyTrashed()->count(); @endphp
+                                @if ($trashedCount > 0)
+                                    <span class="badge bg-light text-sari-dark ms-1">{{ $trashedCount }}</span>
+                                @endif
+                            </a>
+                        </li>
+                    @endif
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('dashboard') }}#low-stock">
                             <i class="bi bi-exclamation-triangle"></i> Low Stock
@@ -54,9 +65,35 @@
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i> {{ auth()->user()->name }}
+                            <i class="bi bi-person-badge"></i>
+                            {{ auth()->user()->isManager() ? 'Manager' : 'Staff' }}
+                            <span class="badge bg-{{ auth()->user()->isManager() ? 'warning text-dark' : 'info' }} ms-1">
+                                {{ auth()->user()->name }}
+                            </span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
+                            <li><h6 class="dropdown-header">Switch Role</h6></li>
+                            <li>
+                                <form method="POST" action="{{ route('role.switch') }}">
+                                    @csrf
+                                    <input type="hidden" name="role" value="manager">
+                                    <button type="submit" class="dropdown-item {{ auth()->user()->isManager() ? 'active' : '' }}">
+                                        <i class="bi bi-shield-check"></i> Manager
+                                        @if (auth()->user()->isManager()) <span class="float-end">&#10003;</span> @endif
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <form method="POST" action="{{ route('role.switch') }}">
+                                    @csrf
+                                    <input type="hidden" name="role" value="staff">
+                                    <button type="submit" class="dropdown-item {{ auth()->user()->isStaff() ? 'active' : '' }}">
+                                        <i class="bi bi-person"></i> Staff
+                                        @if (auth()->user()->isStaff()) <span class="float-end">&#10003;</span> @endif
+                                    </button>
+                                </form>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>

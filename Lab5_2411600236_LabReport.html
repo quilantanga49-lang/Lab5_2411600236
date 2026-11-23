@@ -114,6 +114,6 @@ Using the same palette, typography, icons, and layout on login, dashboard, and p
 
 ## Conclusion
 
-This exercise showed how Laravel implements MVC in a real inventory system. I created migrations and seeders for products and stock transactions, built an Eloquent model with business logic, wrote a resource controller with validation, designed reusable Blade views, protected routes with Breeze authentication, and connected the dashboard to real MySQL data. Compared with the client-side dashboard from Lab 4, the Laravel version supports multiple users, secure logins, persistent data, server-side validation, and maintainable separation of concerns.
+This exercise showed how Laravel implements MVC in a real inventory system. I created migrations and seeders for products and stock transactions, built an Eloquent model with business logic, wrote a resource controller with validation, designed reusable Blade views, protected routes with Breeze authentication, and connected the dashboard to real MySQL data. I also used Laravel&#39;s SoftDeletes trait for a temporary Trash with a Restore button, and added manager/staff roles so only managers can delete or restore products. Compared with the client-side dashboard from Lab 4, the Laravel version supports multiple users, secure logins, persistent data, server-side validation, role-based access, and maintainable separation of concerns.
 </pre>
 </body></html>

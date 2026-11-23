@@ -83,10 +83,58 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        $this->authorizeManager();
+
+        // Soft delete: the product is moved to the Trash, not permanently removed.
         $product->delete();
 
         return redirect()->route('products.index')
-            ->with('success', 'Product removed from the inventory.');
+            ->with('success', 'Product moved to Trash. You can restore it anytime.');
+    }
+
+    /**
+     * Show soft-deleted products.
+     */
+    public function trash()
+    {
+        $products = Product::onlyTrashed()->orderBy('deleted_at', 'desc')->paginate(12);
+
+        return view('products.trash', compact('products'));
+    }
+
+    /**
+     * Restore a soft-deleted product.
+     */
+    public function restore(string $id)
+    {
+        $this->authorizeManager();
+
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->restore();
+
+        return redirect()->route('products.trash')
+            ->with('success', 'Product restored to the inventory successfully.');
+    }
+
+    /**
+     * Permanently delete a product from the Trash.
+     */
+    public function forceDelete(string $id)
+    {
+        $this->authorizeManager();
+
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->forceDelete();
+
+        return redirect()->route('products.trash')
+            ->with('success', 'Product permanently deleted from the Trash.');
+    }
+
+    private function authorizeManager(): void
+    {
+        if (! Auth::user()?->isManager()) {
+            abort(403, 'Only a manager can modify the inventory trash.');
+        }
     }
 
     /**

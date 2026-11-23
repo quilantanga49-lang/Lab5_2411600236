@@ -100,14 +100,16 @@
                                     <a href="{{ route('products.edit', $product) }}" class="btn btn-sm btn-outline-sari" title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form method="POST" action="{{ route('products.destroy', $product) }}" class="d-inline"
-                                          onsubmit="return confirm('Delete {{ addslashes($product->name) }} from the inventory?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                    @if (auth()->user()->isManager())
+                                        <form method="POST" action="{{ route('products.destroy', $product) }}" class="d-inline"
+                                              onsubmit="return confirm('Move {{ addslashes($product->name) }} to Trash? You can restore it later.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Move to Trash">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

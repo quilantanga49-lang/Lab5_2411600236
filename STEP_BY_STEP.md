@@ -160,16 +160,27 @@ File: `app/Http/Controllers/ProductController.php`
 
 | Method | Purpose |
 |---|---|
-| `index()` | Paginated list + search (name, SKU, category, supplier) |
+| `index()` | Paginated list + search (name, SKU, category, brand, supplier) and brand/category filters |
 | `create()` | Show add-product form |
 | `store()` | Validate and insert a product |
 | `show()` | Product details + stock history |
 | `edit()` | Show pre-filled edit form |
 | `update()` | Validate and update a product |
-| `destroy()` | Delete a product (transactions cascade) |
+| `destroy()` | Move a product to Trash (soft delete) — manager only |
+| `trash()` | Show all soft-deleted products |
+| `restore()` | Restore a product from Trash — manager only |
+| `forceDelete()` | Permanently delete a trashed product — manager only |
 | `adjustStock()` | Record stock-in / stock-out |
 
 Validation rules include required fields, string length limits, numeric prices, minimum quantities, and unique SKU (ignoring the current record on update), with custom messages.
+
+### Soft deletes (temporary Trash)
+
+`app/Models/Product.php` uses Laravel's `SoftDeletes` trait and the `products` table has a `deleted_at` column (migration `2026_11_23_000004_add_deleted_at_to_products_table.php`). Deleting a product sets `deleted_at` instead of removing the row, so it can be restored from **Products → Trash**. Only a manager can delete, restore, or permanently delete.
+
+### Manager / Staff roles
+
+The `users` table has a `role` column (`manager` or `staff`, migration `2026_11_23_000005_add_role_to_users_table.php`). The **Store Manager** dropdown in the navbar lets you switch roles. Managers can see Trash and delete/restore products; Staff can browse and manage stock but cannot delete or restore (server-side checks return HTTP 403).
 
 ---
 
@@ -180,11 +191,14 @@ Validation rules include required fields, string length limits, numeric prices, 
 | `resources/views/layouts/app.blade.php` | Master layout: nav, flash messages, Bootstrap, custom CSS |
 | `resources/views/layouts/guest.blade.php` | Login/register/reset layout |
 | `resources/views/dashboard.blade.php` | Real statistics, alerts, category bars, recent activity |
-| `resources/views/products/index.blade.php` | Product table, search, status badges, actions |
-| `resources/views/products/_form.blade.php` | Shared create/edit form with CSRF and inline errors |
+| `resources/views/products/index.blade.php` | Product table, search, status badges, actions, brand/category filters |
+| `resources/views/products/_form.blade.php` | Shared create/edit form with CSRF and inline errors (includes Brand) |
 | `resources/views/products/create.blade.php` | Add product page |
 | `resources/views/products/edit.blade.php` | Edit product page |
 | `resources/views/products/show.blade.php` | Product details, stock adjustment, transaction history |
+| `resources/views/products/trash.blade.php` | Trash page with Restore and permanent-delete buttons |
+| `resources/views/catalog/brands.blade.php` | Brand cards with product counts and filter links |
+| `resources/views/catalog/categories.blade.php` | Category cards with product counts and filter links |
 
 ---
 
@@ -197,9 +211,17 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/brands', [CatalogController::class, 'brands'])->name('brands.index');
+    Route::get('/categories', [CatalogController::class, 'categories'])->name('categories.index');
+
+    Route::get('products/trash', [ProductController::class, 'trash'])->name('products.trash');
+    Route::post('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+    Route::delete('products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.force-delete');
+
     Route::resource('products', ProductController::class);
     Route::post('products/{product}/stock', [ProductController::class, 'adjustStock'])
         ->name('products.stock');
+    Route::post('/role/switch', [RoleController::class, 'switch'])->name('role.switch');
     // profile routes...
 });
 

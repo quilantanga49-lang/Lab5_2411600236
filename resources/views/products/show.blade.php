@@ -17,14 +17,16 @@
         <a href="{{ route('products.edit', $product) }}" class="btn btn-sari">
             <i class="bi bi-pencil"></i> Edit
         </a>
-        <form method="POST" action="{{ route('products.destroy', $product) }}"
-              onsubmit="return confirm('Delete {{ addslashes($product->name) }} from the inventory?');">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-outline-danger">
-                <i class="bi bi-trash"></i> Delete
-            </button>
-        </form>
+        @if (auth()->user()->isManager())
+            <form method="POST" action="{{ route('products.destroy', $product) }}"
+                  onsubmit="return confirm('Move {{ addslashes($product->name) }} to Trash? You can restore it later.');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-outline-danger">
+                    <i class="bi bi-trash"></i> Move to Trash
+                </button>
+            </form>
+        @endif
     </div>
 </div>
 
