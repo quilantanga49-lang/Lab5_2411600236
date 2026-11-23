@@ -323,13 +323,11 @@ All available screenshots are captured in `screenshots/`:
 | 9. Product edit page | `screenshots/09-edit-product.png` |
 | (extra) Product details / stock history | `screenshots/09b-product-details.png` |
 | 10. MySQL products table (CLI fallback) | `screenshots/10-mysql-products-table.png` |
+| 11. GitHub repository | `screenshots/11-github-repository.png` |
 
 > Apache/phpMyAdmin is blocked by Windows Application Control, so the products table is shown from the MySQL CLI instead.
 
-Still take these yourself (requires your GitHub account):
-
-- GitHub — repository files after you push (Part 11)
-- Terminal — successful Artisan output (optional)
+All required screenshots are captured. Optional: Terminal — successful Artisan output.
 
 ## Lab report PDF
 
