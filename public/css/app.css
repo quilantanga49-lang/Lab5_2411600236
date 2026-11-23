@@ -1,10 +1,10 @@
 /* Sari-Sari Store Inventory - custom theme
    Overrides Bootstrap defaults after the Bootstrap stylesheet is loaded. */
 :root {
-    --sari-orange: #f28c28;
-    --sari-orange-dark: #d97716;
-    --sari-green: #2e7d32;
-    --sari-green-dark: #1b5e20;
+    --sari-orange: #6775ae;
+    --sari-orange-dark: #1c2743;
+    --sari-green: #5c52cb;
+    --sari-green-dark: #6f58b4;
     --sari-cream: #fff8ef;
     --sari-dark: #4a2f1d;
     --sari-border: #f0dcc4;
