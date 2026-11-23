@@ -1,0 +1,135 @@
+/* Sari-Sari Store Inventory - custom theme
+   Overrides Bootstrap defaults after the Bootstrap stylesheet is loaded. */
+:root {
+    --sari-orange: #f28c28;
+    --sari-orange-dark: #d97716;
+    --sari-green: #2e7d32;
+    --sari-green-dark: #1b5e20;
+    --sari-cream: #fff8ef;
+    --sari-dark: #4a2f1d;
+    --sari-border: #f0dcc4;
+}
+
+body {
+    background: var(--sari-cream);
+    color: var(--sari-dark);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Navigation */
+.bg-sari {
+    background: linear-gradient(90deg, var(--sari-green-dark), var(--sari-green) 55%, var(--sari-orange)) !important;
+}
+.navbar.bg-sari .nav-link.active,
+.navbar.bg-sari .nav-link:hover {
+    color: #fff7e6 !important;
+    font-weight: 600;
+}
+
+/* Text and backgrounds */
+.text-sari-dark { color: var(--sari-dark) !important; }
+.text-sari-green { color: var(--sari-green) !important; }
+.bg-sari { background-color: var(--sari-orange) !important; }
+.badge.bg-sari { background-color: var(--sari-orange) !important; color: #fff; }
+.bg-green { background: #e6f4ea; color: var(--sari-green); }
+.bg-orange { background: #fff1df; color: var(--sari-orange-dark); }
+.bg-red { background: #fde8e8; color: #c62828; }
+
+/* Buttons */
+.btn-sari {
+    background-color: var(--sari-orange);
+    border-color: var(--sari-orange);
+    color: #fff;
+    font-weight: 600;
+}
+.btn-sari:hover,
+.btn-sari:focus {
+    background-color: var(--sari-orange-dark);
+    border-color: var(--sari-orange-dark);
+    color: #fff;
+}
+.btn-outline-sari {
+    color: var(--sari-orange-dark);
+    border-color: var(--sari-orange);
+}
+.btn-outline-sari:hover,
+.btn-outline-sari:focus {
+    background-color: var(--sari-orange);
+    border-color: var(--sari-orange);
+    color: #fff;
+}
+
+/* Cards and tables */
+.card {
+    border: 1px solid var(--sari-border);
+    border-radius: 0.75rem;
+}
+.card-header {
+    border-bottom: 1px solid var(--sari-border);
+}
+.table thead th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.table > :not(caption) > * > * {
+    padding: 0.7rem 0.8rem;
+}
+
+/* Dashboard stat cards */
+.stat-card {
+    border-left: 4px solid var(--sari-orange);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(74, 47, 29, 0.12) !important;
+}
+.stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+/* Charts */
+.progress-bar {
+    background: linear-gradient(90deg, var(--sari-green), var(--sari-orange));
+}
+
+/* Pagination */
+.pagination .page-link {
+    color: var(--sari-orange-dark);
+}
+.pagination .active .page-link {
+    background-color: var(--sari-orange);
+    border-color: var(--sari-orange);
+    color: #fff;
+}
+
+/* Authentication pages */
+.guest-body {
+    background: radial-gradient(circle at top left, #fff1df, var(--sari-cream) 55%, #f5e3c8);
+}
+.guest-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--sari-green), var(--sari-orange));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 8px 18px rgba(46, 125, 50, 0.25);
+}
+
+/* Form focus states */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--sari-orange);
+    box-shadow: 0 0 0 0.2rem rgba(242, 140, 40, 0.2);
+}

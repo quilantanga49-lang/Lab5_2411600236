@@ -1,0 +1,93 @@
+# Laboratory Exercise 5 — Guide Answers (Sari-Sari Store Inventory)
+
+Use these as a reference when answering the questionnaire in your lab report. Replace the examples with your own wording where appropriate.
+
+---
+
+## 1. MVC architecture
+
+**Model.** The model owns data and business rules. In this project `App\Models\Product` defines the fillable fields, casts, the `transactions()` relationship, the `scopeLowStock()` query scope, and accessors such as `is_low_stock`, `is_out_of_stock` and `stock_value`. `App\Models\InventoryTransaction` represents stock movements. These classes talk to MySQL through Eloquent.
+
+**View.** The view is the presentation layer. Blade files under `resources/views` render the UI: `products/index.blade.php` displays the product table and badges, `products/_form.blade.php` is the shared create/edit form, and `dashboard.blade.php` shows statistics. The master layout `layouts/app.blade.php` provides navigation, flash messages, Bootstrap and the custom theme.
+
+**Controller.** The controller handles requests and chooses the response. `ProductController@index` reads the query string, asks the model for products, and returns the index view. `ProductController@store` validates input, creates a product through Eloquent, and redirects. `DashboardController@index` aggregates product data and passes statistics to the dashboard view.
+
+### 1a. Server-side MVC vs client-side JavaScript (Lab 4)
+
+Lab 4 kept data in `localStorage` on one browser. Server-side MVC keeps data in MySQL on the server, applies validation there, enforces authentication, and lets multiple users see the same up-to-date records. Laravel also gives CSRF protection, hashed passwords, server-side authorization, and a consistent audit trail (the `inventory_transactions` table). Client-side-only data can be edited or cleared by the user and is not shared across devices.
+
+### 1b. HTTP request flow
+
+Example — clicking **Save Product** on the add form:
+
+1. Browser sends `POST /products` with a CSRF token and form fields.
+2. `routes/web.php` matches the route and applies the `auth` middleware.
+3. Laravel routes it to `ProductController@store`.
+4. The controller runs `$request->validate(...)` with the rules in `rules()`.
+5. On success, `Product::create($validated)` uses Eloquent to `INSERT` into `products`.
+6. The controller redirects to `products.index` with a flash message.
+7. `ProductController@index` fetches products, and `products/index.blade.php` renders the updated list.
+
+---
+
+## 2. Eloquent ORM and migrations
+
+Eloquent maps the `products` table to the `Product` model and the `inventory_transactions` table to `InventoryTransaction`. Instead of writing SQL by hand we use methods such as:
+
+```php
+Product::create($validated);                 // INSERT
+Product::lowStock()->orderBy('quantity')->get(); // SELECT with a local scope
+$product->update($validated);                // UPDATE
+$product->delete();                          // DELETE
+$product->transactions()->create([...]);     // related INSERT via relationship
+```
+
+`Product::all()` and `$product->stock_value` (a computed accessor) are also Eloquent features.
+
+### 2a. Purpose of migrations
+
+Migrations are version control for the database schema. `2026_11_23_000001_create_products_table.php` defines the products table in PHP with `Schema::create`, including `sku` as a unique key and default values for quantity and reorder level. Running `php artisan migrate` creates the table; `migrate:fresh --seed` rebuilds it from scratch. Advantages over manual SQL: repeatable, portable, reviewable in Git, easy to roll back with `down()`, and consistent across teammates' machines.
+
+### 2b. MySQL vs localStorage
+
+MySQL stores data centrally on the server, supports concurrent users, transactions, indexes, foreign keys, and backups. `localStorage` is limited to one browser profile, has no server enforcement, and can be modified by the user. Server-side data must be protected with input validation, unique constraints, CSRF tokens, password hashing (`Hash::make`), authentication middleware, prepared statements (Eloquent does this), and authorization checks.
+
+---
+
+## 3. Separation of concerns
+
+Separation of concerns means each part of the application has one job. In this project:
+
+- Data/business rules live in `app/Models/Product.php` (`is_low_stock`, `adjustStock`).
+- Request handling and validation live in `app/Http/Controllers/ProductController.php`.
+- HTML lives in `resources/views`.
+- Routing lives in `routes/web.php`.
+- Styling lives in `public/css/app.css`.
+
+A change to the dashboard layout does not require changing the product model, and a change to the products table only affects the migration and model.
+
+### 3a. Limitations of client-side-only approach
+
+Lab 4's dashboard could not share stock counts between users, could not enforce validation securely, had no real login, and lost data when the browser cache was cleared. A real store needs a single source of truth, audit history, and controlled access — all provided here by Laravel + MySQL.
+
+### 3b. Input validation
+
+Validation is defined in `ProductController::rules()` and `messages()` and applied in `store()`, `update()`, and `adjustStock()`. Rules include `required`, `string`, `max`, `integer`, `min`, `numeric`, and `unique:products,sku`. Without validation, invalid prices/quantities, duplicate SKUs, or oversized strings could be saved, breaking reports and possibly causing errors or SQL/injection-style attacks.
+
+---
+
+## 4. Color scheme and Lab 4 integration
+
+`public/css/app.css` defines CSS variables (`--sari-orange`, `--sari-green`, `--sari-cream`, `--sari-dark`). It is linked **after** Bootstrap in both layouts, so its rules override Bootstrap defaults for navigation, buttons, cards, tables, badges, progress bars, and pagination. Auth pages use the same variables through `layouts/guest.blade.php`.
+
+The Lab 4 dashboard concept was connected to the Laravel backend by replacing hard-coded/localStorage values with data passed from `DashboardController@index`: product counts, low-stock counts, inventory value, category totals, recent products, and stock movements. Static chart data became CSS progress bars driven by database counts.
+
+### 4b. Consistent visual identity
+
+Using the same palette, typography, icons, and layout on login, dashboard, and product pages makes the system feel like one application. Users can recognize actions quickly (orange = primary action, green = healthy stock, red = out of stock), which improves usability and trust.
+
+---
+
+## Conclusion
+
+This exercise showed how Laravel implements MVC in a real inventory system. I created migrations and seeders for products and stock transactions, built an Eloquent model with business logic, wrote a resource controller with validation, designed reusable Blade views, protected routes with Breeze authentication, and connected the dashboard to real MySQL data. Compared with the client-side dashboard from Lab 4, the Laravel version supports multiple users, secure logins, persistent data, server-side validation, and maintainable separation of concerns.
