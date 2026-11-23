@@ -199,6 +199,8 @@ File: `app/Http/Controllers/UserController.php`
 | Method | Purpose |
 |---|---|
 | `index()` | Paginated, searchable users table (User, Email, Role, Email Verified, Status, Actions) |
+| `create()` | Show the Add User form — manager only |
+| `store()` | Validate and create the account with a hashed password — manager only |
 | `trash()` | Show soft-deleted users with Restore / permanent delete |
 | `updateRole()` | Change a user between Manager and Staff |
 | `toggleStatus()` | Activate / deactivate an account |
@@ -208,7 +210,7 @@ File: `app/Http/Controllers/UserController.php`
 
 Users use the `SoftDeletes` trait and an `is_active` boolean (migration `2026_11_23_000006_add_soft_deletes_and_status_to_users_table.php`). The table columns are **User, Email, Role, Email Verified, Status, Actions**. A manager can change roles, toggle status, delete, restore, and permanently delete. Staff see a read-only table and direct action attempts return HTTP 403. You cannot delete or deactivate your own account — a guard redirects with a warning.
 
-The **Users** nav item opens the list; deleted accounts are reached with the **Deleted Users** button on that page.
+The **Users** nav item opens the list. The **Add User** button opens a form with full name, email, role (Manager/Staff), password + confirmation, Email verified, and Active account checkboxes. Validation checks required fields, valid/unique email, minimum 8-character password, and confirmation match. Passwords are stored with `Hash::make()`. Deleted accounts are reached with the **Deleted Users** button on the list page.
 
 ---
 
@@ -228,6 +230,7 @@ The **Users** nav item opens the list; deleted accounts are reached with the **D
 | `resources/views/catalog/brands.blade.php` | Brand cards with product counts and filter links |
 | `resources/views/catalog/categories.blade.php` | Category cards with product counts and filter links |
 | `resources/views/users/index.blade.php` | Users table: name, email, role, email verified, status, actions |
+| `resources/views/users/create.blade.php` | Add User form with validation errors |
 | `resources/views/users/trash.blade.php` | Deleted users with Restore and permanent-delete buttons |
 
 ---
@@ -256,7 +259,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('users/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.force-delete');
     Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
     Route::patch('users/{user}/status', [UserController::class, 'toggleStatus'])->name('users.status');
-    Route::resource('users', UserController::class)->only(['index', 'destroy']);
+    Route::resource('users', UserController::class)->only(['index', 'create', 'store', 'destroy']);
 
     Route::post('/role/switch', [RoleController::class, 'switch'])->name('role.switch');
     // profile routes...

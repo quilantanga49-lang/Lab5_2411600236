@@ -9,10 +9,15 @@
         <p class="text-muted mb-0">Manage accounts, roles, and access for your sari-sari store.</p>
     </div>
     @if (auth()->user()->isManager())
-        <a href="{{ route('users.trash') }}" class="btn btn-light mt-2 mt-sm-0">
-            <i class="bi bi-trash"></i> Deleted Users
-            @if ($deletedCount > 0) <span class="badge bg-danger">{{ $deletedCount }}</span> @endif
-        </a>
+        <div class="d-flex gap-2 mt-2 mt-sm-0">
+            <a href="{{ route('users.trash') }}" class="btn btn-light">
+                <i class="bi bi-trash"></i> Deleted Users
+                @if ($deletedCount > 0) <span class="badge bg-danger">{{ $deletedCount }}</span> @endif
+            </a>
+            <a href="{{ route('users.create') }}" class="btn btn-sari">
+                <i class="bi bi-person-plus"></i> Add User
+            </a>
+        </div>
     @endif
 </div>
 

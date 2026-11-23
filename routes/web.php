@@ -28,7 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('users/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.force-delete');
     Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
     Route::patch('users/{user}/status', [UserController::class, 'toggleStatus'])->name('users.status');
-    Route::resource('users', UserController::class)->only(['index', 'destroy']);
+    Route::resource('users', UserController::class)->only(['index', 'create', 'store', 'destroy']);
 
     // Trash routes must be declared before the resource route so
     // /products/trash is not treated as /products/{product}.

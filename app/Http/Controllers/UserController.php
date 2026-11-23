@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -41,6 +42,54 @@ class UserController extends Controller
         $users = User::onlyTrashed()->orderBy('deleted_at', 'desc')->paginate(12);
 
         return view('users.trash', compact('users'));
+    }
+
+    /**
+     * Show the form for creating a new user account.
+     */
+    public function create(): View
+    {
+        $this->authorizeManager();
+
+        return view('users.create', ['user' => new User()]);
+    }
+
+    /**
+     * Validate and store a new user account.
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $this->authorizeManager();
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:120'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'role' => ['required', 'in:manager,staff'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'email_verified' => ['nullable', 'boolean'],
+            'is_active' => ['nullable', 'boolean'],
+        ], [
+            'name.required' => 'Enter the user\'s full name.',
+            'email.required' => 'Enter an email address.',
+            'email.email' => 'Enter a valid email address.',
+            'email.unique' => 'That email is already registered.',
+            'role.in' => 'Select a valid role.',
+            'password.required' => 'Enter a password.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.confirmed' => 'The password confirmation does not match.',
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role' => $validated['role'],
+            'password' => Hash::make($validated['password']),
+            'email_verified_at' => ! empty($validated['email_verified']) ? now() : null,
+            'is_active' => ! empty($validated['is_active']),
+        ]);
+
+        return redirect()->route('users.index')
+            ->with('success', "{$user->name} added successfully as ".ucfirst($user->role).'.');
     }
 
     /**
