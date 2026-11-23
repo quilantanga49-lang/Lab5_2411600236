@@ -11,7 +11,11 @@ Set-Location $root
 # 1. Push to GitHub
 git remote remove origin 2>$null
 git remote add origin $RepoUrl
-git push -u origin main
+git push -u origin main 2>$null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Normal push failed - repo may already have a README. Retrying with force push..."
+    git push -u origin main --force
+}
 
 # 2. Regenerate the lab report PDF with your real name
 $answers = Get-Content -Raw "$root\LAB_REPORT_ANSWERS.md"
