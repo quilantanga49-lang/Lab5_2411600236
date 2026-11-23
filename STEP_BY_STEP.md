@@ -262,17 +262,26 @@ C:\xampp\php\php.exe artisan db:seed --force
 
 ---
 
-## Part 11 — GitHub (optional)
+## Part 11 — Git / GitHub
+
+Git 2.56.1 was installed and the project is already committed locally:
 
 ```powershell
-git init
+git init -b main
 git add .
-git commit -m "Lab 5: Laravel MVC sari-sari store inventory system"
+git commit -m "Lab 5: Laravel MVC sari-sari store inventory system (2411600236)"
+```
+
+Commit: `75b2057 Lab 5: Laravel MVC sari-sari store inventory system (2411600236)`
+
+To push, you still need to provide a GitHub repository URL and sign in:
+
+```powershell
 git remote add origin <your-repository-url>
 git push -u origin main
 ```
 
-> Git is not installed on this machine, so this step was left for you to run after installing Git.
+> No GitHub URL or credentials are configured on this machine, so the remote push could not be completed. The local commit is ready.
 
 ---
 
@@ -299,23 +308,29 @@ C:\xampp\php\php.exe artisan migrate:fresh --seed --force
 
 ## Screenshots for the lab report
 
-Browser screenshots are already captured in `screenshots/`:
+All available screenshots are captured in `screenshots/`:
 
 | Lab screenshot | File |
 |---|---|
+| 1. VS Code — Product model | `screenshots/01-vscode-product-model.png` |
+| 2. VS Code — Product controller | `screenshots/02-vscode-product-controller.png` |
+| 3. VS Code — Blade form view | `screenshots/03-vscode-blade-form.png` |
+| 4. VS Code — Custom CSS | `screenshots/04-vscode-custom-css.png` |
 | 5. Login page | `screenshots/05-login.png` |
 | 6. Dashboard with real statistics | `screenshots/06-dashboard.png` |
 | 7. Product index page | `screenshots/07-products-index.png` |
 | 8. Add product form | `screenshots/08-add-product.png` |
 | 9. Product edit page | `screenshots/09-edit-product.png` |
 | (extra) Product details / stock history | `screenshots/09b-product-details.png` |
+| 10. MySQL products table (CLI fallback) | `screenshots/10-mysql-products-table.png` |
 
-Still take these yourself:
+> Apache/phpMyAdmin is blocked by Windows Application Control, so the products table is shown from the MySQL CLI instead.
 
-1. VS Code — `app/Models/Product.php`
-2. VS Code — `app/Http/Controllers/ProductController.php`
-3. VS Code — `resources/views/products/*`
-4. VS Code — `public/css/app.css`
-10. phpMyAdmin — `products` table with data
-11. GitHub — repository files
-12. Terminal — successful Artisan output
+Still take these yourself (requires your GitHub account):
+
+- GitHub — repository files after you push (Part 11)
+- Terminal — successful Artisan output (optional)
+
+## Lab report PDF
+
+A ready-to-edit report is generated at `Lab5_2411600236_Student.pdf`, with an HTML source at `Lab5_2411600236_LabReport.html`. Replace `Student` in the header with your name before submitting.
