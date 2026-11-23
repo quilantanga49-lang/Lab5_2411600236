@@ -333,4 +333,4 @@ Still take these yourself (requires your GitHub account):
 
 ## Lab report PDF
 
-A ready-to-edit report is generated at `Lab5_2411600236_Student.pdf`, with an HTML source at `Lab5_2411600236_LabReport.html`. Replace `Student` in the header with your name before submitting.
+The completed report is `Lab5_2411600236_Quilantanga.pdf`, with an HTML source at `Lab5_2411600236_LabReport.html`.
