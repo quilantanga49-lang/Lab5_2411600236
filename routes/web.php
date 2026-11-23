@@ -26,3 +26,33 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Catch invalid or extra URL segments (e.g. /login/...//...//.../***)
+// and return the user to the matching page instead of a 404.
+Route::fallback(function () {
+    $segments = explode('/', trim(request()->path(), '/'));
+    $base = $segments[0] ?? '';
+
+    // Keep product detail pages when extra segments are appended.
+    if ($base === 'products' && isset($segments[1]) && ctype_digit($segments[1])) {
+        return redirect()->route('products.show', (int) $segments[1]);
+    }
+
+    $pages = [
+        'login'           => 'login',
+        'register'        => 'register',
+        'forgot-password' => 'password.request',
+        'reset-password'  => 'password.reset',
+        'dashboard'       => 'dashboard',
+        'products'        => 'products.index',
+        'profile'         => 'profile.edit',
+    ];
+
+    if (isset($pages[$base])) {
+        return redirect()->route($pages[$base]);
+    }
+
+    return auth()->check()
+        ? redirect()->route('dashboard')
+        : redirect()->route('login');
+});
