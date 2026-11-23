@@ -18,7 +18,7 @@
         <form method="GET" action="{{ route('products.index') }}" class="row g-2 align-items-center">
             <div class="col-md-8">
                 <input type="search" name="search" value="{{ $search }}"
-                       class="form-control" placeholder="Search by name, SKU, category, or supplier...">
+                       class="form-control" placeholder="Search by name, SKU, category, brand, or supplier...">
             </div>
             <div class="col-md-4 d-flex gap-2">
                 <button type="submit" class="btn btn-outline-sari flex-fill">
@@ -47,6 +47,7 @@
                             <th>SKU</th>
                             <th>Product</th>
                             <th>Category</th>
+                            <th>Brand</th>
                             <th class="text-center">Qty</th>
                             <th class="text-center">Reorder</th>
                             <th class="text-end">Price</th>
@@ -65,6 +66,7 @@
                                     @endif
                                 </td>
                                 <td><span class="badge bg-light text-dark border">{{ $product->category }}</span></td>
+                                <td><span class="badge bg-white text-sari-dark border">{{ $product->brand ?? '—' }}</span></td>
                                 <td class="text-center fw-bold">{{ $product->quantity }}</td>
                                 <td class="text-center text-muted">{{ $product->reorder_level }}</td>
                                 <td class="text-end">&#8369;{{ number_format($product->unit_price, 2) }}</td>

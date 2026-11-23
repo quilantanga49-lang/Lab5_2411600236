@@ -16,6 +16,7 @@ class Product extends Model
         'sku',
         'description',
         'category',
+        'brand',
         'quantity',
         'reorder_level',
         'unit_price',

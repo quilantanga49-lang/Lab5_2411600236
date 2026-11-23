@@ -14,7 +14,7 @@
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
+    <div class="col-6 col-md-4 col-xl-2">
         <div class="card stat-card h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -27,7 +27,7 @@
             </div>
         </div>
     </div>
-    <div class="col-6 col-lg-3">
+    <div class="col-6 col-md-4 col-xl-2">
         <div class="card stat-card h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -40,7 +40,7 @@
             </div>
         </div>
     </div>
-    <div class="col-6 col-lg-3">
+    <div class="col-6 col-md-4 col-xl-2">
         <div class="card stat-card h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -53,7 +53,7 @@
             </div>
         </div>
     </div>
-    <div class="col-6 col-lg-3">
+    <div class="col-6 col-md-4 col-xl-2">
         <div class="card stat-card h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -62,6 +62,32 @@
                         <div class="h4 fw-bold mb-0 mt-2 text-sari-green">&#8369;{{ number_format($inventoryValue, 2) }}</div>
                     </div>
                     <span class="stat-icon bg-green"><i class="bi bi-cash-coin"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small">Categories</div>
+                        <div class="h2 fw-bold mb-0">{{ $totalCategories }}</div>
+                    </div>
+                    <span class="stat-icon bg-orange"><i class="bi bi-grid"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small">Brands</div>
+                        <div class="h2 fw-bold mb-0">{{ $totalBrands }}</div>
+                    </div>
+                    <span class="stat-icon bg-green"><i class="bi bi-tag"></i></span>
                 </div>
             </div>
         </div>
@@ -158,8 +184,32 @@
 
     <div class="col-lg-5">
         <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-white">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-tags"></i> Products by Brand</h5>
+                <span class="badge bg-sari">{{ $totalBrands }}</span>
+            </div>
+            <div class="card-body">
+                @php $brandMax = $brandTotals->max() ?: 1; @endphp
+                @foreach ($brandTotals as $brand => $count)
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="fw-semibold">{{ $brand ?? 'Unbranded' }}</span>
+                            <span class="text-muted">{{ $count }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar"
+                                 style="width: {{ round(($count / $brandMax) * 100) }}%"
+                                 aria-valuenow="{{ $count }}" aria-valuemin="0" aria-valuemax="{{ $brandMax }}"></div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold"><i class="bi bi-pie-chart"></i> Products by Category</h5>
+                <span class="badge bg-sari">{{ $totalCategories }}</span>
             </div>
             <div class="card-body">
                 @php $max = $categoryTotals->max() ?: 1; @endphp
@@ -189,7 +239,7 @@
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
                                 <div class="fw-semibold small">{{ $product->name }}</div>
-                                <div class="text-muted small">{{ $product->category }} &middot; {{ $product->sku }}</div>
+                                <div class="text-muted small">{{ $product->category }} &middot; {{ $product->brand ?? 'No brand' }} &middot; {{ $product->sku }}</div>
                             </div>
                             <span class="badge bg-light text-dark border">{{ $product->quantity }} pcs</span>
                         </li>

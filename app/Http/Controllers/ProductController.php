@@ -21,6 +21,7 @@ class ProductController extends Controller
                     $query->where('name', 'like', "%{$search}%")
                         ->orWhere('sku', 'like', "%{$search}%")
                         ->orWhere('category', 'like', "%{$search}%")
+                        ->orWhere('brand', 'like', "%{$search}%")
                         ->orWhere('supplier', 'like', "%{$search}%");
                 });
             })
@@ -36,6 +37,7 @@ class ProductController extends Controller
         return view('products.create', [
             'product' => new Product(),
             'categories' => $this->categories(),
+            'brands' => $this->brands(),
         ]);
     }
 
@@ -61,6 +63,7 @@ class ProductController extends Controller
         return view('products.edit', [
             'product' => $product,
             'categories' => $this->categories(),
+            'brands' => $this->brands(),
         ]);
     }
 
@@ -114,6 +117,7 @@ class ProductController extends Controller
             'sku' => ['required', 'string', 'max:50', 'unique:products,sku'.($productId ? ','.$productId : '')],
             'description' => ['nullable', 'string', 'max:1000'],
             'category' => ['required', 'string', 'max:80'],
+            'brand' => ['required', 'string', 'max:80'],
             'quantity' => ['required', 'integer', 'min:0', 'max:100000'],
             'reorder_level' => ['required', 'integer', 'min:0', 'max:100000'],
             'unit_price' => ['required', 'numeric', 'min:0', 'max:1000000'],
@@ -128,6 +132,7 @@ class ProductController extends Controller
             'sku.required' => 'SKU is required.',
             'sku.unique' => 'This SKU is already used by another product.',
             'category.required' => 'Choose or enter a category.',
+            'brand.required' => 'Choose or enter a brand.',
             'quantity.required' => 'Enter the current stock quantity.',
             'quantity.min' => 'Quantity cannot be negative.',
             'reorder_level.required' => 'Enter a reorder level.',
@@ -142,6 +147,16 @@ class ProductController extends Controller
             ->distinct()
             ->orderBy('category')
             ->pluck('category')
+            ->all();
+    }
+
+    private function brands(): array
+    {
+        return Product::query()
+            ->distinct()
+            ->whereNotNull('brand')
+            ->orderBy('brand')
+            ->pluck('brand')
             ->all();
     }
 }

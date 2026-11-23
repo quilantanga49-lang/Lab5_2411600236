@@ -24,6 +24,13 @@ class DashboardController extends Controller
             ->map(fn ($group) => $group->count())
             ->sortDesc();
 
+        $brandTotals = $products->groupBy('brand')
+            ->map(fn ($group) => $group->count())
+            ->sortDesc();
+
+        $totalCategories = $categoryTotals->count();
+        $totalBrands = $brandTotals->count();
+
         $recentTransactions = InventoryTransaction::with(['product', 'user'])
             ->latest()
             ->take(6)
@@ -37,6 +44,9 @@ class DashboardController extends Controller
             'lowStockProducts',
             'recentProducts',
             'categoryTotals',
+            'brandTotals',
+            'totalCategories',
+            'totalBrands',
             'recentTransactions'
         ));
     }

@@ -45,6 +45,10 @@
                         <div class="fw-semibold">{{ $product->category }}</div>
                     </div>
                     <div class="col-sm-6">
+                        <div class="text-muted small">Brand</div>
+                        <div class="fw-semibold">{{ $product->brand ?? '—' }}</div>
+                    </div>
+                    <div class="col-sm-6">
                         <div class="text-muted small">Supplier</div>
                         <div class="fw-semibold">{{ $product->supplier ?? '—' }}</div>
                     </div>

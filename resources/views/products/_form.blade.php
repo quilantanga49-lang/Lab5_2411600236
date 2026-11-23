@@ -27,6 +27,19 @@
     </div>
 
     <div class="col-md-6">
+        <label for="brand" class="form-label">Brand <span class="text-danger">*</span></label>
+        <input type="text" id="brand" name="brand" list="brand-list"
+               class="form-control @error('brand') is-invalid @enderror"
+               value="{{ old('brand', $product->brand) }}" placeholder="e.g. Coca-Cola" required>
+        <datalist id="brand-list">
+            @foreach ($brands as $brand)
+                <option value="{{ $brand }}"></option>
+            @endforeach
+        </datalist>
+        @error('brand') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    </div>
+
+    <div class="col-md-6">
         <label for="supplier" class="form-label">Supplier</label>
         <input type="text" id="supplier" name="supplier" class="form-control @error('supplier') is-invalid @enderror"
                value="{{ old('supplier', $product->supplier) }}" placeholder="e.g. Metro Drinks Depot">
