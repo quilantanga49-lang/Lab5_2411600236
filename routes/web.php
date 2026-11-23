@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
@@ -16,6 +17,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/brands', [CatalogController::class, 'brands'])->name('brands.index');
+    Route::get('/categories', [CatalogController::class, 'categories'])->name('categories.index');
+
     Route::resource('products', ProductController::class);
     Route::post('products/{product}/stock', [ProductController::class, 'adjustStock'])
         ->name('products.stock');

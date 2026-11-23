@@ -14,6 +14,8 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $search = trim((string) $request->input('search', ''));
+        $brand = trim((string) $request->input('brand', ''));
+        $category = trim((string) $request->input('category', ''));
 
         $products = Product::query()
             ->when($search !== '', function ($query) use ($search) {
@@ -25,11 +27,13 @@ class ProductController extends Controller
                         ->orWhere('supplier', 'like', "%{$search}%");
                 });
             })
+            ->when($brand !== '', fn ($query) => $query->where('brand', $brand))
+            ->when($category !== '', fn ($query) => $query->where('category', $category))
             ->orderBy('name')
             ->paginate(12)
             ->withQueryString();
 
-        return view('products.index', compact('products', 'search'));
+        return view('products.index', compact('products', 'search', 'brand', 'category'));
     }
 
     public function create()

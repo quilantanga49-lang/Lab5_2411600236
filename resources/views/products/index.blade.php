@@ -16,6 +16,8 @@
 <div class="card shadow-sm border-0 mb-4">
     <div class="card-body">
         <form method="GET" action="{{ route('products.index') }}" class="row g-2 align-items-center">
+            @if ($brand !== '') <input type="hidden" name="brand" value="{{ $brand }}"> @endif
+            @if ($category !== '') <input type="hidden" name="category" value="{{ $category }}"> @endif
             <div class="col-md-8">
                 <input type="search" name="search" value="{{ $search }}"
                        class="form-control" placeholder="Search by name, SKU, category, brand, or supplier...">
@@ -29,6 +31,18 @@
                 @endif
             </div>
         </form>
+        @if ($brand !== '' || $category !== '')
+            <div class="mt-3 d-flex flex-wrap align-items-center gap-2">
+                <span class="text-muted small">Filtered by:</span>
+                @if ($brand !== '')
+                    <span class="badge bg-sari">Brand: {{ $brand }}</span>
+                @endif
+                @if ($category !== '')
+                    <span class="badge bg-sari">Category: {{ $category }}</span>
+                @endif
+                <a href="{{ route('products.index') }}" class="small text-decoration-none">Clear filters</a>
+            </div>
+        @endif
     </div>
 </div>
 

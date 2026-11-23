@@ -36,6 +36,16 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('brands.*') ? 'active' : '' }}" href="{{ route('brands.index') }}">
+                            <i class="bi bi-tag"></i> Brand
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
+                            <i class="bi bi-grid"></i> Categories
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ route('dashboard') }}#low-stock">
                             <i class="bi bi-exclamation-triangle"></i> Low Stock
                         </a>
