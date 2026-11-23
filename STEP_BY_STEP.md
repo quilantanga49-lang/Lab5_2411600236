@@ -95,6 +95,14 @@ C:\xampp\php\php.exe artisan db:seed --force
 
 Login: **admin@sari.com** / **password** (password stored with `Hash::make()`).
 
+Seeded demo accounts (all password: **password**):
+
+| Name | Email | Role | Email Verified |
+|---|---|---|---|
+| Store Manager | admin@sari.com | manager | Yes |
+| Maria Cashier | cashier@sari.com | staff | Yes |
+| Juan Helper | helper@sari.com | staff | No |
+
 ### Step 3: Apply the color scheme to auth views
 
 Files edited:
@@ -184,6 +192,26 @@ The `users` table has a `role` column (`manager` or `staff`, migration `2026_11_
 
 ---
 
+## Part 4B — User management
+
+File: `app/Http/Controllers/UserController.php`
+
+| Method | Purpose |
+|---|---|
+| `index()` | Paginated, searchable users table (User, Email, Role, Email Verified, Status, Actions) |
+| `trash()` | Show soft-deleted users with Restore / permanent delete |
+| `updateRole()` | Change a user between Manager and Staff |
+| `toggleStatus()` | Activate / deactivate an account |
+| `destroy()` | Move a user to Trash (soft delete) — manager only |
+| `restore()` | Restore a trashed user — manager only |
+| `forceDelete()` | Permanently delete a trashed user — manager only |
+
+Users use the `SoftDeletes` trait and an `is_active` boolean (migration `2026_11_23_000006_add_soft_deletes_and_status_to_users_table.php`). The table columns are **User, Email, Role, Email Verified, Status, Actions**. A manager can change roles, toggle status, delete, restore, and permanently delete. Staff see a read-only table and direct action attempts return HTTP 403. You cannot delete or deactivate your own account — a guard redirects with a warning.
+
+The **Users** nav item opens the list; deleted accounts are reached with the **Deleted Users** button on that page.
+
+---
+
 ## Part 5 — Blade views
 
 | File | Purpose |
@@ -199,6 +227,8 @@ The `users` table has a `role` column (`manager` or `staff`, migration `2026_11_
 | `resources/views/products/trash.blade.php` | Trash page with Restore and permanent-delete buttons |
 | `resources/views/catalog/brands.blade.php` | Brand cards with product counts and filter links |
 | `resources/views/catalog/categories.blade.php` | Category cards with product counts and filter links |
+| `resources/views/users/index.blade.php` | Users table: name, email, role, email verified, status, actions |
+| `resources/views/users/trash.blade.php` | Deleted users with Restore and permanent-delete buttons |
 
 ---
 
@@ -221,6 +251,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
     Route::post('products/{product}/stock', [ProductController::class, 'adjustStock'])
         ->name('products.stock');
+    Route::get('users/trash', [UserController::class, 'trash'])->name('users.trash');
+    Route::post('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::delete('users/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.force-delete');
+    Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
+    Route::patch('users/{user}/status', [UserController::class, 'toggleStatus'])->name('users.status');
+    Route::resource('users', UserController::class)->only(['index', 'destroy']);
+
     Route::post('/role/switch', [RoleController::class, 'switch'])->name('role.switch');
     // profile routes...
 });

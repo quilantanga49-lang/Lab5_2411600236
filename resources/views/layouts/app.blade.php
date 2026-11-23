@@ -45,10 +45,15 @@
                             <i class="bi bi-grid"></i> Categories
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
+                            <i class="bi bi-people"></i> Users
+                        </a>
+                    </li>
                     @if (auth()->user()->isManager())
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('products.trash') ? 'active' : '' }}" href="{{ route('products.trash') }}">
-                                <i class="bi bi-trash"></i> Trash
+                                <i class="bi bi-trash"></i> Product Trash
                                 @php $trashedCount = \App\Models\Product::onlyTrashed()->count(); @endphp
                                 @if ($trashedCount > 0)
                                     <span class="badge bg-light text-sari-dark ms-1">{{ $trashedCount }}</span>
@@ -115,6 +120,13 @@
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="bi bi-check-circle"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif

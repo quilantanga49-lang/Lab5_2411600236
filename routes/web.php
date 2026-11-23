@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,6 +21,14 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::middleware('auth')->group(function () {
     Route::get('/brands', [CatalogController::class, 'brands'])->name('brands.index');
     Route::get('/categories', [CatalogController::class, 'categories'])->name('categories.index');
+
+    // User management — declare /users/trash before the resource route.
+    Route::get('users/trash', [UserController::class, 'trash'])->name('users.trash');
+    Route::post('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::delete('users/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.force-delete');
+    Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
+    Route::patch('users/{user}/status', [UserController::class, 'toggleStatus'])->name('users.status');
+    Route::resource('users', UserController::class)->only(['index', 'destroy']);
 
     // Trash routes must be declared before the resource route so
     // /products/trash is not treated as /products/{product}.
@@ -46,13 +55,18 @@ Route::fallback(function () {
     $segments = explode('/', trim(request()->path(), '/'));
     $base = $segments[0] ?? '';
 
-    // Keep product detail and trash pages when extra segments are appended.
-    if ($base === 'products' && isset($segments[1])) {
-        if (ctype_digit($segments[1])) {
-            return redirect()->route('products.show', (int) $segments[1]);
+    // Keep detail and trash pages when extra segments are appended.
+    if (isset($segments[1])) {
+        if ($base === 'products') {
+            if (ctype_digit($segments[1])) {
+                return redirect()->route('products.show', (int) $segments[1]);
+            }
+            if ($segments[1] === 'trash') {
+                return redirect()->route('products.trash');
+            }
         }
-        if ($segments[1] === 'trash') {
-            return redirect()->route('products.trash');
+        if ($base === 'users' && $segments[1] === 'trash') {
+            return redirect()->route('users.trash');
         }
     }
 
@@ -65,6 +79,7 @@ Route::fallback(function () {
         'products'        => 'products.index',
         'brands'          => 'brands.index',
         'categories'      => 'categories.index',
+        'users'           => 'users.index',
         'profile'         => 'profile.edit',
     ];
 

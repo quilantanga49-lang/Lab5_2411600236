@@ -12,26 +12,51 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::updateOrCreate(
-            ['email' => 'admin@sari.com'],
+        // Demo users. All use the password: password
+        $users = [
             [
                 'name' => 'Store Manager',
+                'email' => 'admin@sari.com',
                 'role' => 'manager',
-                'password' => Hash::make('password'),
                 'email_verified_at' => now(),
-            ]
-        );
+            ],
+            [
+                'name' => 'Maria Cashier',
+                'email' => 'cashier@sari.com',
+                'role' => 'staff',
+                'email_verified_at' => now(),
+            ],
+            [
+                'name' => 'Juan Helper',
+                'email' => 'helper@sari.com',
+                'role' => 'staff',
+                'email_verified_at' => null,
+            ],
+        ];
+
+        foreach ($users as $data) {
+            $user = User::withTrashed()->updateOrCreate(
+                ['email' => $data['email']],
+                $data + [
+                    'password' => Hash::make('password'),
+                    'is_active' => true,
+                    'deleted_at' => null,
+                ]
+            );
+        }
+
+        $manager = User::where('email', 'admin@sari.com')->firstOrFail();
 
         $this->call(ProductSeeder::class);
 
         InventoryTransaction::query()->delete();
 
-        Product::all()->each(function (Product $product) use ($user) {
+        Product::all()->each(function (Product $product) use ($manager) {
             $product->transactions()->create([
                 'type' => 'in',
                 'quantity' => $product->quantity,
                 'reference' => 'INITIAL-STOCK',
-                'user_id' => $user->id,
+                'user_id' => $manager->id,
             ]);
         });
     }
